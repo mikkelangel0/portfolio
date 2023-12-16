@@ -1,7 +1,7 @@
 import json
 import websocket
 import threading
-from config import BINANCE_WS_CONFIG as cfg
+import config as cfg
 
 class BinanceWebSocket(threading.Thread):
     def __init__(self, data_queue):
@@ -41,7 +41,7 @@ class BinanceWebSocket(threading.Thread):
         :param ws: WebSocket object.
         :param error: Error encountered.
         """
-        print(error)
+        print("WS Error: ", error)
 
 
     def on_close(self, ws, close_status_code, close_msg):
@@ -62,7 +62,7 @@ class BinanceWebSocket(threading.Thread):
         :param ws: WebSocket object.
         """
         # Construct the subscription message
-        stream_names = [f"{symbol}@{stream}" for symbol in cfg.get('symbols') for stream in cfg.get('streams')]
+        stream_names = [f"{symbol}@{stream}" for symbol in cfg.SYMBOLS for stream in cfg.BINANCE_WS_CONFIG.get('streams')]
         params = {
             "method": "SUBSCRIBE",
             "params": stream_names,
