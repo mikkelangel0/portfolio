@@ -5,8 +5,9 @@ import config as cfg
 import itertools
 
 class BinanceREST(threading.Thread):
-    def __init__(self):
+    def __init__(self, data_queue):
         super().__init__()
+        self.data_queue = data_queue
         self.base_url = cfg.BINANCE_REST_CONFIG.get('base_url')
         self.interval = cfg.BINANCE_REST_CONFIG.get('rest_interval')
         self.requests_cycle = itertools.cycle(cfg.BINANCE_REST_CONFIG['requests'])
@@ -20,8 +21,7 @@ class BinanceREST(threading.Thread):
     def run(self):
         while not self.stop_flag.is_set():
             for symbol in self.symbols:
-                data = self.fetch_all_queue(symbol)
-                print(data)
+                self.data_queue.put(self.fetch_all_queue(symbol))
 
                 # Sleep to stay within Rate Limits
                 time.sleep(self.interval)
